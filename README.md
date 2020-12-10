@@ -33,6 +33,9 @@ with open(f'{file_dir}/wikipedia.movies.json', mode='r') as file:
 len(wiki_movies_raw)
 # First 5 records
 wiki_movies_raw[:5]
+
+kaggle_metadata = pd.read_csv(f'{file_dir}movies_metadata.csv', low_memory=False)
+ratings = pd.read_csv(f'{file_dir}ratings.csv')
 ```  
 There are 7,311 data points, or records of movies, but is this a reasonable number of records? One way to check that 7,311 is reasonable is to look at the rate of movies being released that it implies. Rough mental math here is the key—we want these calculations to be quick enough that these checks become a habit. So, let's say that it's about 7,200 movies over about 30 years. That's 240 movies released per year, or a little less than five movies released per week. That seems a little high if we're considering only major movies, but if for every two major motion pictures, there are three indie films, that doesn't seem like an outlandish number.  
 
