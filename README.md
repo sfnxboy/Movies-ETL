@@ -57,3 +57,27 @@ Theres in iterative provess for cleaning data. First, we need to inspect our dat
 - When values are missing, will they need to be removed, replaced, or interpolated?  
 
 While transforming your data, you might bounce between steps in the iteration—for example, making a plan, then realizing you need to inspect more; executing a plan, then realizing a step was missed and you need to quickly rework the plan. We offer these steps as a descriptive, not prescriptive, approach. Cleaning up messy data is a messy process. The best practice is to document every step of your thought process and actions in detail.
+
+### Load  
+After extracting and transforming the data, its time to load the new dataframe into a SQL database. The `to_sql()` method in Pandas allows a programmer to save the dataframe to an SQL table. First you must create a Database engine in your python program. The following code serves as a template.  
+```
+from sqlalchemy import create_engine
+
+from config import db_password # Imports your database password from a config.py file
+db_string = f"postgres://postgres:{db_password}@127.0.0.1:5432/{DATABASE_NAME}" # Connects to local server
+
+movies_df.to_sql(name='movies', con=engine) # Import the Movie Data
+
+# create a variable for the number of rows imported
+rows_imported = 0
+# get the start_time from time.time()
+start_time = time.time()
+for data in pd.read_csv(f'{file_dir}ratings.csv', chunksize=1000000):
+    print(f'importing rows {rows_imported} to {rows_imported + len(data)}...', end='')
+    data.to_sql(name='ratings', con=engine, if_exists='append')
+    rows_imported += len(data)
+
+    # add elapsed time to final print out
+    print(f'Done. {time.time() - start_time} total seconds elapsed')
+```  
+Once the cell finishes running, confirm the table imported correctly using pgAdmin. Verify the columns have the correct data type, inspect the first 100 rows, and check the row count. The code above only works if you already have a database by the specified name already created in your PGAdmin server.
